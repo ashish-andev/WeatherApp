@@ -17,7 +17,7 @@ class WeatherApplication : Application(){
 
         appComponent = DaggerAppComponent.builder()
                 .appModule(AppModule(this))
-//                .roomModule(RoomModule())
+                .roomModule(RoomModule())
                 .remoteModule(RemoteModule()).build()
     }
 }

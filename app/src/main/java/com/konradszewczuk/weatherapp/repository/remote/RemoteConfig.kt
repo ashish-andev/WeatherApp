@@ -1,7 +1,7 @@
 package com.konradszewczuk.weatherapp.repository.remote
 
 
-class RemoteContract {
+class RemoteConfig {
     companion object {
 
         //const val BASE_API_LAYER = "http://api.openweathermap.org/data/2.5/"

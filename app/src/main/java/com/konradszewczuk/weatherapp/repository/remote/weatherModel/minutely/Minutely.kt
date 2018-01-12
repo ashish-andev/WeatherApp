@@ -1,9 +1,6 @@
 package com.konradszewczuk.weatherapp.repository.remote.weatherModel.minutely
 
 
-/**
- * Created by Admin on 2018-01-11.
- */
 data class Minutely(
         val summary: String, //Mostly cloudy for the hour.
         val icon: String, //partly-cloudy-night

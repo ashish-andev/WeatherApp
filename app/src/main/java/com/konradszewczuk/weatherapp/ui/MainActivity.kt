@@ -13,15 +13,18 @@ import com.konradszewczuk.weatherapp.repository.WeatherViewModel
 import android.widget.ArrayAdapter
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
+import com.konradszewczuk.weatherapp.repository.room.CityEntity
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
 import kotlinx.android.synthetic.main.activity_main.*
 import org.parceler.Parcels
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherViewModel
+    private var searchedCityNames  = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
 
-        //TODO remove - only for testing
-        val adapter = ArrayAdapter(this,
-                android.R.layout.simple_dropdown_item_1line, AUTOCOMPLETE)
-
-        autocomplete_textView.setAdapter(adapter)
-        autocomplete_textView.threshold = 0
 
         val itemInputNameObservable = RxTextView.textChanges(autocomplete_textView)
                 .map { inputText: CharSequence -> inputText.isEmpty() || !isValidCityInput(inputText.toString()) }
@@ -54,8 +51,10 @@ class MainActivity : AppCompatActivity() {
             inputLinearLayout.alpha = 0.5f
             progressBar.visibility = View.VISIBLE
 
+            val searchedCityName = autocomplete_textView.text.toString()
+
             val geocoder = Geocoder(this)
-            val fromLocationName = geocoder.getFromLocationName(autocomplete_textView.text.toString(), 1)
+            val fromLocationName = geocoder.getFromLocationName(searchedCityName, 1)
 
             val address = fromLocationName.get(0)
 
@@ -77,6 +76,10 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("tempBundle", Parcels.wrap(WeatherDetailsDTO(address.featureName + ", " + address.countryName, temperature, cloudCoverPercentage)))
 
                 startActivity(intent)
+
+
+                if(!(searchedCityNames.contains(searchedCityName)))
+                    viewModel.addCity(searchedCityName)
             }
         }
 
@@ -84,14 +87,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun convertToCelsius(temperatureFahrenheit: Double?): Double? =
             if(temperatureFahrenheit != null)
-                ((temperatureFahrenheit - 32)*5)/9;
+                ((temperatureFahrenheit - 32)*5)/9
             else null
 
 
     override fun onStart() {
         super.onStart()
-    }
+        viewModel.getCities()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {  citiesList: List<CityEntity> ->
+                    searchedCityNames.clear()
+                    citiesList.forEach { searchedCityNames.add(it.cityName) }
 
-    //TODO remove - only for testing
-    private val AUTOCOMPLETE = arrayOf("London", "Cracow", "Warsaw", "Los Angeles", "Miami")
+                    val adapter = ArrayAdapter(this,
+                            android.R.layout.simple_dropdown_item_1line, searchedCityNames)
+
+                    autocomplete_textView.setAdapter(adapter)
+                    autocomplete_textView.threshold = 0
+                }
+    }
 }

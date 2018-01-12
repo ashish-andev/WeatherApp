@@ -1,10 +1,5 @@
 package com.konradszewczuk.weatherapp.repository.remote.weatherModel.daily
 
-
-
-/**
- * Created by Admin on 2018-01-11.
- */
 data class Daily(
         val summary: String, //Mixed precipitation tomorrow through Tuesday, with temperatures falling to 25°F next Thursday.
         val icon: String, //snow

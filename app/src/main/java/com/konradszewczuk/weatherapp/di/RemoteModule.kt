@@ -2,7 +2,7 @@ package com.konradszewczuk.weatherapp.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.konradszewczuk.weatherapp.repository.remote.RemoteContract
+import com.konradszewczuk.weatherapp.repository.remote.RemoteConfig
 import com.konradszewczuk.weatherapp.repository.remote.RemoteWeatherService
 import dagger.Module
 import dagger.Provides
@@ -32,7 +32,7 @@ class RemoteModule {
 
     @Provides @Singleton fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit =
             Retrofit.Builder()
-                    .baseUrl(RemoteContract.BASE_URL)
+                    .baseUrl(RemoteConfig.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(okHttpClient)

@@ -1,9 +1,6 @@
 package com.konradszewczuk.weatherapp.repository.remote.weatherModel.hourly
 
 
-/**
- * Created by Admin on 2018-01-11.
- */
 data class Hourly(
         val summary: String, //Windy starting tomorrow morning and rain tomorrow afternoon.
         val icon: String, //rain
