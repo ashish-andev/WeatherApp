@@ -14,17 +14,22 @@ import android.widget.ArrayAdapter
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
 import com.konradszewczuk.weatherapp.repository.room.CityEntity
+import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
+import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
+import com.konradszewczuk.weatherapp.utils.StringDateFormatter.convertTimestampToDayOfTheWeek
+import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertToCelsius
 import kotlinx.android.synthetic.main.activity_main.*
 import org.parceler.Parcels
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherViewModel
-    private var searchedCityNames  = ArrayList<String>()
+    private var searchedCityNames = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             val latitude = address.latitude
             val longitude = address.longitude
 
-            viewModel.getWeather(latitude,longitude).observeOn(AndroidSchedulers.mainThread()).subscribe { weatherResponse: WeatherResponse? ->
+            viewModel.getWeather(latitude, longitude).observeOn(AndroidSchedulers.mainThread()).subscribe { weatherResponse: WeatherResponse? ->
                 //TODO format DTO in ViewModel, refactor
 
                 inputLinearLayout.isEnabled = true
@@ -69,34 +74,42 @@ class MainActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
 
                 val intent = Intent(this, WeatherDetailsActivity::class.java)
-                val temperatureFahrenheit: Double? = weatherResponse?.currently?.temperature
-                val temperature = convertToCelsius(temperatureFahrenheit)
-                val cloudCoverPercentage: Double? = weatherResponse?.currently?.cloudCover
-
-                intent.putExtra("tempBundle", Parcels.wrap(WeatherDetailsDTO(address.featureName + ", " + address.countryName, temperature, cloudCoverPercentage)))
+                val locationName = address.featureName + ", " + address.countryName
+                intent.putExtra("tempBundle", Parcels.wrap(transform(locationName, weatherResponse)))
 
                 startActivity(intent)
 
-
-                if(!(searchedCityNames.contains(searchedCityName)))
+                if (!(searchedCityNames.contains(searchedCityName)))
                     viewModel.addCity(searchedCityName)
             }
         }
 
     }
 
-    private fun convertToCelsius(temperatureFahrenheit: Double?): Double? =
-            if(temperatureFahrenheit != null)
-                ((temperatureFahrenheit - 32)*5)/9
-            else null
+    private fun transform(cityName: String, weatherResponse: WeatherResponse?): WeatherDetailsDTO {
+        val temperatureFahrenheit: Double? = weatherResponse?.currently?.temperature
+        val temperature = convertToCelsius(temperatureFahrenheit)
+        val cloudCoverPercentage: Double? = weatherResponse?.currently?.cloudCover
+        val weatherSummary = weatherResponse?.currently?.summary
+        val windSpeed = weatherResponse?.currently?.windSpeed
+        val humidity = weatherResponse?.currently?.humidity
 
+        var weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
+
+        weatherResponse?.daily?.data?.forEach {
+            if (it.time.toLong() * 1000 > Date().time)
+                weeklyWeatherList.add(WeeklyWeatherDTO(it.temperatureMax.toString(), it.temperatureMin.toString(), convertTimestampToDayOfTheWeek(it.time), it.icon))
+        }
+
+        return WeatherDetailsDTO(cityName = cityName, weatherSummary = weatherSummary, temperature = temperature, windSpeed = windSpeed, humidity = humidity, cloudsPercentage = cloudCoverPercentage, weeklyDayWeahterList = weeklyWeatherList)
+    }
 
     override fun onStart() {
         super.onStart()
         viewModel.getCities()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {  citiesList: List<CityEntity> ->
+                .subscribe { citiesList: List<CityEntity> ->
                     searchedCityNames.clear()
                     citiesList.forEach { searchedCityNames.add(it.cityName) }
 
