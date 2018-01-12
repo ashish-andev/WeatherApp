@@ -6,6 +6,7 @@ import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.repository.WeatherViewModel
 
@@ -49,22 +50,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         cityButton.setOnClickListener {
+            inputLinearLayout.isEnabled = false
+            inputLinearLayout.alpha = 0.5f
+            progressBar.visibility = View.VISIBLE
 
             val geocoder = Geocoder(this)
-            val fromLocationName = geocoder.getFromLocationName("London", 1)
+            val fromLocationName = geocoder.getFromLocationName(autocomplete_textView.text.toString(), 1)
 
             val address = fromLocationName.get(0)
+
             val latitude = address.latitude
             val longitude = address.longitude
 
             viewModel.getWeather(latitude,longitude).observeOn(AndroidSchedulers.mainThread()).subscribe { weatherResponse: WeatherResponse? ->
+                //TODO format DTO in ViewModel, refactor
 
+                inputLinearLayout.isEnabled = true
+                inputLinearLayout.alpha = 1f
+                progressBar.visibility = View.INVISIBLE
 
                 val intent = Intent(this, WeatherDetailsActivity::class.java)
-                val temperature: Double? = weatherResponse?.currently?.temperature
+                val temperatureFahrenheit: Double? = weatherResponse?.currently?.temperature
+                val temperature = convertToCelsius(temperatureFahrenheit)
                 val cloudCoverPercentage: Double? = weatherResponse?.currently?.cloudCover
 
-                intent.putExtra("tempBundle", Parcels.wrap(WeatherDetailsDTO("Andy", temperature, cloudCoverPercentage)))
+                intent.putExtra("tempBundle", Parcels.wrap(WeatherDetailsDTO(address.featureName + ", " + address.countryName, temperature, cloudCoverPercentage)))
 
                 startActivity(intent)
             }
@@ -72,10 +82,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun convertToCelsius(temperatureFahrenheit: Double?): Double? =
+            if(temperatureFahrenheit != null)
+                ((temperatureFahrenheit - 32)*5)/9;
+            else null
+
+
     override fun onStart() {
         super.onStart()
     }
 
     //TODO remove - only for testing
-    private val AUTOCOMPLETE = arrayOf("Belgium", "France", "Italy", "Germany", "Spain")
+    private val AUTOCOMPLETE = arrayOf("London", "Cracow", "Warsaw", "Los Angeles", "Miami")
 }

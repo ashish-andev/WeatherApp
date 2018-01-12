@@ -6,4 +6,39 @@
     android:layout_height="match_parent"
     tools:context="com.konradszewczuk.weatherapp.ui.WeatherDetailsActivity">
 
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textViewCurrentTemperature"
+                    android:textSize="64sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="19 C" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="TEST" />
+            </FrameLayout>
+
+
+        </LinearLayout>
+
+
 </android.support.constraint.ConstraintLayout>

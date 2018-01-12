@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="string_with_html" > <![CDATA[ X<sup><small>2</small></sup> ]]></string>
 
 </resources>
