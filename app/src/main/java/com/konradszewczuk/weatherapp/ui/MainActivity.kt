@@ -19,6 +19,7 @@ import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
 import com.konradszewczuk.weatherapp.utils.StringDateFormatter.convertTimestampToDayOfTheWeek
+import com.konradszewczuk.weatherapp.utils.StringDateFormatter.convertTimestampToHourFormat
 import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertToCelsius
 import kotlinx.android.synthetic.main.activity_main.*
 import org.parceler.Parcels
@@ -68,8 +69,6 @@ class MainActivity : AppCompatActivity() {
             val longitude = address.longitude
 
             viewModel.getWeather(latitude, longitude).observeOn(AndroidSchedulers.mainThread()).subscribe { weatherResponse: WeatherResponse? ->
-                //TODO format DTO in ViewModel, refactor
-
                 inputLinearLayout.isEnabled = true
                 inputLinearLayout.alpha = 1f
                 progressBar.visibility = View.INVISIBLE
@@ -96,7 +95,6 @@ class MainActivity : AppCompatActivity() {
         val humidity = weatherResponse?.currently?.humidity
 
         val weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
-
         weatherResponse?.daily?.data?.forEach {
             if (it.time.toLong() * 1000 > Date().time)
                 weeklyWeatherList.add(WeeklyWeatherDTO(it.temperatureMax.toString(), it.temperatureMin.toString(), convertTimestampToDayOfTheWeek(it.time), it.icon))
@@ -107,7 +105,21 @@ class MainActivity : AppCompatActivity() {
             hourlyWeatherList.add(HourlyWeatherDTO(it.time.toLong(), it.temperature))
         }
 
-        return WeatherDetailsDTO(cityName = cityName, weatherSummary = weatherSummary, temperature = temperature, windSpeed = windSpeed, humidity = humidity?.let { it * 100 }, cloudsPercentage = cloudCoverPercentage?.let { it * 100 }, weeklyDayWeahterList = weeklyWeatherList, hourlyWeatherList = hourlyWeatherList)
+
+        //temperature for only next 24hours
+        val hourlyWeatherStringFormatedHoursList = (0..24).mapTo(ArrayList<String>()) { convertTimestampToHourFormat(timestamp = hourlyWeatherList[it].timestamp, timeZone = weatherResponse?.timezone) }
+
+        return WeatherDetailsDTO(
+                cityName = cityName,
+                weatherSummary = weatherSummary,
+                temperature = temperature,
+                windSpeed = windSpeed,
+                humidity = humidity?.let { it * 100 },
+                cloudsPercentage = cloudCoverPercentage?.let { it * 100 },
+                weeklyDayWeahterList = weeklyWeatherList,
+                hourlyWeatherList = hourlyWeatherList,
+                hourlyWeatherStringFormatedHoursList =  hourlyWeatherStringFormatedHoursList
+                )
     }
 
     override fun onStart() {

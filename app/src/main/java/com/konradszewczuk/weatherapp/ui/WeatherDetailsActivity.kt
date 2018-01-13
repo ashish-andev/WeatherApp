@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.text.format.DateUtils
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -16,21 +17,18 @@ import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.ui.adapters.WeeklyWeatherAdapter
 import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
-import com.konradszewczuk.weatherapp.utils.StringDateFormatter.convertTimestampToHourFormat
+import com.konradszewczuk.weatherapp.utils.AxisValueFormatter
 import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertToCelsius
 import kotlinx.android.synthetic.main.activity_weather_details.*
 import org.parceler.Parcels
-import java.util.ArrayList
-import com.konradszewczuk.weatherapp.utils.HourAxisValueFormatter
-
-
+import com.konradszewczuk.weatherapp.utils.ValueFormatter
+import java.util.*
 
 
 class WeatherDetailsActivity : AppCompatActivity() {
 
     private var weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
     private var adapter: WeeklyWeatherAdapter? = null
-    var currentMinReferenceTimestamp: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,54 +55,7 @@ class WeatherDetailsActivity : AppCompatActivity() {
         recyclerViewWeeklyWeather.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         recyclerViewWeeklyWeather.setAdapter(adapter)
 
-        val entries = ArrayList<Entry>()
-        currentMinReferenceTimestamp = weatherDetails.hourlyWeatherList?.get(0)?.timestamp
-
-        weatherDetails.hourlyWeatherList?.forEach {
-            if(DateUtils.isToday(it.timestamp * 1000)){
-                val currentTimestamp = it.timestamp
-                currentMinReferenceTimestamp?.let {
-                    if(it > currentTimestamp){
-                        currentMinReferenceTimestamp = currentTimestamp
-                    }
-                }
-                //TODO populate specific view for x-Axis hour display
-                convertTimestampToHourFormat(it.timestamp)
-                val timestamp = it.timestamp
-
-                convertToCelsius(it.temperature)?.let {
-                    entries.add(Entry(timestamp.toFloat(), it.toFloat()))
-                }
-            }
-
-        }
-
-        val lineDataSet  = LineDataSet(entries, "Label") // add entries to dataset
-        lineDataSet.setColor(Color.BLACK);
-        lineDataSet.valueTextSize = 16f
-
-        val lineData = LineData(lineDataSet)
-        chartHourlyWeather.setData(lineData)
-        chartHourlyWeather.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM)
-        chartHourlyWeather.getXAxis().setLabelCount(25)
-        currentMinReferenceTimestamp?.let {
-            val xAxisFormatter = HourAxisValueFormatter(it)
-            val xAxis = chartHourlyWeather.getXAxis()
-            xAxis.setValueFormatter(xAxisFormatter)
-        }
-
-        chartHourlyWeather.axisRight.setDrawGridLines(false)
-        chartHourlyWeather.axisRight.isEnabled = false
-        chartHourlyWeather.axisLeft.isEnabled = false
-        chartHourlyWeather.getAxisLeft().setDrawGridLines(false)
-        chartHourlyWeather.getXAxis().setDrawGridLines(false)
-        chartHourlyWeather.canScrollHorizontally(1)
-        chartHourlyWeather.setVisibleYRangeMaximum(6f, YAxis.AxisDependency.RIGHT)
-//        chartHourlyWeather.setVisibleXRangeMaximum(100f) // allow 20 values to be displayed at once on the x-axis, not more
-//        chartHourlyWeather.moveViewToX(10f)
-        chartHourlyWeather.legend.isEnabled = false
-        chartHourlyWeather.description.isEnabled = false
-        chartHourlyWeather.invalidate() // refresh
+        setDayChart(chartHourlyWeather, weatherDetails)
     }
 
     private fun processTemperatureText(temperature: Double) {
@@ -119,4 +70,74 @@ class WeatherDetailsActivity : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
+    private fun setDayChart(lineChart: LineChart, weatherDetailsDTO: WeatherDetailsDTO) {
+
+        val entries = ArrayList<Entry>()
+        val temperatureList = ArrayList<Int>()
+
+        //temp - add data to calculate min temperature for chart axis
+        //entries - add data to display temp for every hour
+        //hours - add data to display time in chart
+        for (i in 0..24) {
+            convertToCelsius(weatherDetailsDTO.hourlyWeatherList?.get(i)?.temperature)?.let {
+                temperatureList.add(it.toInt())
+                entries.add(Entry(i.toFloat(), it.toFloat()))
+            }
+        }
+
+        val lineDataSet = LineDataSet(entries, "Label")
+        customizeLineDataSet(lineDataSet)
+
+        val leftAxis = lineChart.axisLeft
+        setYAxis(leftAxis, temperatureList)
+
+        val rightAxis = lineChart.axisRight
+        setYAxis(rightAxis, temperatureList)
+
+        val downAxis = lineChart.xAxis
+        weatherDetailsDTO.hourlyWeatherStringFormatedHoursList?.let {
+            setXAxis(downAxis, weatherDetailsDTO.hourlyWeatherStringFormatedHoursList)
+        }
+
+        val lineData = LineData(lineDataSet)
+        lineDataSet.valueFormatter = ValueFormatter()
+        customizeLineChart(lineChart, lineData)
+    }
+
+    private fun setXAxis(xAxis: XAxis, values: ArrayList<String>) {
+        xAxis.labelCount = 25
+        xAxis.setDrawGridLines(false)
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.valueFormatter = AxisValueFormatter(values)
+    }
+
+    private fun customizeLineDataSet(lineDataSet: LineDataSet) {
+        lineDataSet.valueTextSize = 12f
+        lineDataSet.circleHoleRadius = 2.5f
+        lineDataSet.circleRadius = 4f
+        lineDataSet.valueFormatter = ValueFormatter()
+        lineDataSet.color = R.color.colorAccent
+        lineDataSet.valueTextColor = R.color.colorPrimary
+    }
+
+    private fun customizeLineChart(lineChart: LineChart, lineData: LineData) {
+        val description = Description()
+        description.text = ""
+        lineChart.data = lineData
+        lineChart.legend.isEnabled = false
+        lineChart.setTouchEnabled(false)
+        lineChart.description = description
+        lineChart.canScrollHorizontally(1)
+        lineChart.invalidate()
+        lineChart.notifyDataSetChanged()
+    }
+
+    private fun setYAxis(axis: YAxis, temp: ArrayList<Int>) {
+        axis.setDrawGridLines(false)
+        axis.setDrawLabels(false)
+        axis.axisMinimum = (Collections.min(temp) - 2).toFloat()
+        axis.axisMaximum = (Collections.max(temp) + 2).toFloat()
+    }
+
 }
