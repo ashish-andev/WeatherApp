@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository
+package com.konradszewczuk.weatherapp.ui
 
 import android.arch.lifecycle.ViewModel
 import com.konradszewczuk.weatherapp.di.WeatherApplication

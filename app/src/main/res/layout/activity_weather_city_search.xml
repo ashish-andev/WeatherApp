@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.konradszewczuk.weatherapp.ui.MainActivity">
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/app_background" />
 
     <LinearLayout
         android:id="@+id/inputLinearLayout"
@@ -32,6 +31,8 @@
                 android:id="@+id/autocomplete_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
                 android:hint="City" />
 
         </android.support.design.widget.TextInputLayout>
@@ -51,4 +52,4 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </FrameLayout>
-</LinearLayout>
+

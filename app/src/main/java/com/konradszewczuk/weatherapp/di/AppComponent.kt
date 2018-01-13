@@ -1,6 +1,6 @@
 package com.konradszewczuk.weatherapp.di
 
-import com.konradszewczuk.weatherapp.repository.WeatherViewModel
+import com.konradszewczuk.weatherapp.ui.WeatherViewModel
 import dagger.Component
 import javax.inject.Singleton
 

@@ -17,11 +17,10 @@ import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.ui.adapters.WeeklyWeatherAdapter
 import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
-import com.konradszewczuk.weatherapp.utils.AxisValueFormatter
-import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertToCelsius
+import com.konradszewczuk.weatherapp.utils.ChartFormatter
+import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertFahrenheitToCelsius
 import kotlinx.android.synthetic.main.activity_weather_details.*
 import org.parceler.Parcels
-import com.konradszewczuk.weatherapp.utils.ValueFormatter
 import java.util.*
 
 
@@ -55,7 +54,7 @@ class WeatherDetailsActivity : AppCompatActivity() {
         recyclerViewWeeklyWeather.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         recyclerViewWeeklyWeather.setAdapter(adapter)
 
-        setDayChart(chartHourlyWeather, weatherDetails)
+        setHourlyChart(chartHourlyWeather, weatherDetails)
     }
 
     private fun processTemperatureText(temperature: Double) {
@@ -71,16 +70,13 @@ class WeatherDetailsActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setDayChart(lineChart: LineChart, weatherDetailsDTO: WeatherDetailsDTO) {
+    private fun setHourlyChart(lineChart: LineChart, weatherDetailsDTO: WeatherDetailsDTO) {
 
         val entries = ArrayList<Entry>()
         val temperatureList = ArrayList<Int>()
 
-        //temp - add data to calculate min temperature for chart axis
-        //entries - add data to display temp for every hour
-        //hours - add data to display time in chart
         for (i in 0..24) {
-            convertToCelsius(weatherDetailsDTO.hourlyWeatherList?.get(i)?.temperature)?.let {
+            convertFahrenheitToCelsius(weatherDetailsDTO.hourlyWeatherList?.get(i)?.temperature)?.let {
                 temperatureList.add(it.toInt())
                 entries.add(Entry(i.toFloat(), it.toFloat()))
             }
@@ -101,7 +97,7 @@ class WeatherDetailsActivity : AppCompatActivity() {
         }
 
         val lineData = LineData(lineDataSet)
-        lineDataSet.valueFormatter = ValueFormatter()
+        lineDataSet.valueFormatter = ChartFormatter.ValueFormatter()
         customizeLineChart(lineChart, lineData)
     }
 
@@ -109,14 +105,14 @@ class WeatherDetailsActivity : AppCompatActivity() {
         xAxis.labelCount = 25
         xAxis.setDrawGridLines(false)
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.valueFormatter = AxisValueFormatter(values)
+        xAxis.valueFormatter = ChartFormatter.AxisValueFormatter(values)
     }
 
     private fun customizeLineDataSet(lineDataSet: LineDataSet) {
         lineDataSet.valueTextSize = 12f
         lineDataSet.circleHoleRadius = 2.5f
         lineDataSet.circleRadius = 4f
-        lineDataSet.valueFormatter = ValueFormatter()
+        lineDataSet.valueFormatter = ChartFormatter.ValueFormatter()
         lineDataSet.color = R.color.colorAccent
         lineDataSet.valueTextColor = R.color.colorPrimary
     }

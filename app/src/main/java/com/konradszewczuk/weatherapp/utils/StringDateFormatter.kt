@@ -26,17 +26,3 @@ object StringDateFormatter {
     }
 }
 
-class AxisValueFormatter(val values: ArrayList<String>) : IAxisValueFormatter {
-
-    override fun getFormattedValue(value: Float, axis: AxisBase): String {
-        return values[value.toInt()]
-    }
-}
-
-class ValueFormatter : IValueFormatter {
-    private val DEGREE = "\u00b0"
-
-    override fun getFormattedValue(value: Float, entry: Entry, dataSetIndex: Int, viewPortHandler: ViewPortHandler): String {
-        return "%.1f".format(value.toDouble()) + DEGREE
-    }
-}

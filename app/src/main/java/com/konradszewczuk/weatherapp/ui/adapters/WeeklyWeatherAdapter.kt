@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
-import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertToCelsius
+import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertFahrenheitToCelsius
 import java.util.ArrayList
 
 
@@ -24,8 +24,8 @@ class WeeklyWeatherAdapter(val list: ArrayList<WeeklyWeatherDTO>) : RecyclerView
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val item = list.get(position)
-        holder?.textViewDayMaxTemp?.setText("%.2f".format(convertToCelsius(item.maxTemp.toDouble())))
-        holder?.textViewDayMinTemp?.setText("%.2f".format(convertToCelsius(item.minTemp.toDouble())))
+        holder?.textViewDayMaxTemp?.setText("%.2f".format(convertFahrenheitToCelsius(item.maxTemp.toDouble())))
+        holder?.textViewDayMinTemp?.setText("%.2f".format(convertFahrenheitToCelsius(item.minTemp.toDouble())))
         holder?.textViewDayWeatherWeekDay?.setText(item.dayOfWeek)
         holder?.textViewDayWeatherType?.setText(item.weatherType)
     }
