@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
 import com.konradszewczuk.weatherapp.repository.room.CityEntity
+import com.konradszewczuk.weatherapp.ui.dto.HourlyWeatherDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
@@ -94,14 +95,19 @@ class MainActivity : AppCompatActivity() {
         val windSpeed = weatherResponse?.currently?.windSpeed
         val humidity = weatherResponse?.currently?.humidity
 
-        var weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
+        val weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
 
         weatherResponse?.daily?.data?.forEach {
             if (it.time.toLong() * 1000 > Date().time)
                 weeklyWeatherList.add(WeeklyWeatherDTO(it.temperatureMax.toString(), it.temperatureMin.toString(), convertTimestampToDayOfTheWeek(it.time), it.icon))
         }
 
-        return WeatherDetailsDTO(cityName = cityName, weatherSummary = weatherSummary, temperature = temperature, windSpeed = windSpeed, humidity = humidity, cloudsPercentage = cloudCoverPercentage, weeklyDayWeahterList = weeklyWeatherList)
+        val hourlyWeatherList = ArrayList<HourlyWeatherDTO>()
+        weatherResponse?.hourly?.data?.forEach {
+            hourlyWeatherList.add(HourlyWeatherDTO(it.time.toLong(), it.temperature))
+        }
+
+        return WeatherDetailsDTO(cityName = cityName, weatherSummary = weatherSummary, temperature = temperature, windSpeed = windSpeed, humidity = humidity?.let { it * 100 }, cloudsPercentage = cloudCoverPercentage?.let { it * 100 }, weeklyDayWeahterList = weeklyWeatherList, hourlyWeatherList = hourlyWeatherList)
     }
 
     override fun onStart() {
