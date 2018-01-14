@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository.remote
+package com.konradszewczuk.weatherapp.data.remote
 
 
 class RemoteConfig {

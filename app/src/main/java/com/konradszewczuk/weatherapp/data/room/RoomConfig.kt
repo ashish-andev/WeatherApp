@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository.room
+package com.konradszewczuk.weatherapp.data.room
 
 
 class RoomConfig {

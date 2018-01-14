@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.ui.dto
+package com.konradszewczuk.weatherapp.domain.dto
 
 import org.parceler.Parcel
 import org.parceler.ParcelConstructor

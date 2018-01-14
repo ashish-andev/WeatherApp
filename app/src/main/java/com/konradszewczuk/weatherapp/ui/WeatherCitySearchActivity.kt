@@ -12,8 +12,8 @@ import com.konradszewczuk.weatherapp.R
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
-import com.konradszewczuk.weatherapp.repository.room.CityEntity
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
+import com.konradszewczuk.weatherapp.data.room.CityEntity
 
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
 import com.konradszewczuk.weatherapp.utils.TransformersDTO.transformToWeatherDetailsDTO

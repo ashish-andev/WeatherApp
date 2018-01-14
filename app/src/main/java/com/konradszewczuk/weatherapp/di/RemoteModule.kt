@@ -2,8 +2,8 @@ package com.konradszewczuk.weatherapp.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.konradszewczuk.weatherapp.repository.remote.RemoteConfig
-import com.konradszewczuk.weatherapp.repository.remote.RemoteWeatherService
+import com.konradszewczuk.weatherapp.data.remote.RemoteConfig
+import com.konradszewczuk.weatherapp.data.remote.RemoteWeatherService
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

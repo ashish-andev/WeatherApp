@@ -1,7 +1,7 @@
 package com.konradszewczuk.weatherapp.di
 
 import android.content.Context
-import com.konradszewczuk.weatherapp.repository.room.RoomDataSource
+import com.konradszewczuk.weatherapp.data.room.RoomDataSource
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -2,31 +2,31 @@ package com.konradszewczuk.weatherapp.ui
 
 import android.arch.lifecycle.ViewModel
 import com.konradszewczuk.weatherapp.di.WeatherApplication
-import com.konradszewczuk.weatherapp.repository.remote.RemoteWeatherDataSource
-import com.konradszewczuk.weatherapp.repository.room.CityEntity
-import com.konradszewczuk.weatherapp.repository.room.RoomDataSource
+import com.konradszewczuk.weatherapp.data.remote.RemoteWeatherDataSource
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
+import com.konradszewczuk.weatherapp.data.repository.WeatherRepository
+import com.konradszewczuk.weatherapp.data.room.CityEntity
+import com.konradszewczuk.weatherapp.data.room.RoomDataSource
 import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
 import javax.inject.Inject
 
 
-class WeatherViewModel: ViewModel() {
-
-    @Inject lateinit var remoteWeatherDataSource: RemoteWeatherDataSource
-    @Inject lateinit var roomDataSource: RoomDataSource
+class WeatherViewModel : ViewModel() {
+    @Inject lateinit var weatherRepository: WeatherRepository
 
     init {
         initializeDagger()
     }
 
-    fun getWeather(latitude: Double, longitude: Double) = remoteWeatherDataSource.requestWeatherForCity(latitude.toString(), longitude.toString()).subscribeOn(Schedulers.computation())
+    fun getWeather(latitude: Double, longitude: Double) = weatherRepository.getWeather(latitude, longitude).subscribeOn(Schedulers.computation())
 
-    fun getCities() = roomDataSource.weatherSearchCityDao().getAllCities()
+    fun getCities() = weatherRepository.getCities()
 
-    fun addCity(cityName: String) {
-       Completable.fromCallable { roomDataSource.weatherSearchCityDao().insertCity(CityEntity(cityName = cityName)) }.subscribeOn(Schedulers.io()).subscribe()
-    }
+    fun addCity(cityName: String) = weatherRepository.addCity(cityName)
 
     private fun initializeDagger() = WeatherApplication.appComponent.inject(this)
 }

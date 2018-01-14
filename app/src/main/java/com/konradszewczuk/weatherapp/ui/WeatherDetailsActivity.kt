@@ -15,8 +15,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.ui.adapters.WeeklyWeatherAdapter
-import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
-import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
+import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
+import com.konradszewczuk.weatherapp.domain.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.ChartFormatter
 import com.konradszewczuk.weatherapp.utils.StringFormatter.convertToValueWithUnit
 import com.konradszewczuk.weatherapp.utils.StringFormatter.unitDegreesCelsius

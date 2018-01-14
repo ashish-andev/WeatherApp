@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository.remote.weatherModel.hourly
+package com.konradszewczuk.weatherapp.data.remote.weatherModel.hourly
 
 
 data class Hourly(

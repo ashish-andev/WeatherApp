@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository.remote.weatherModel.minutely
+package com.konradszewczuk.weatherapp.data.remote.weatherModel.minutely
 
 
 data class Minutely(

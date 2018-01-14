@@ -1,9 +1,9 @@
-package com.konradszewczuk.weatherapp.repository.remote.weatherModel
+package com.konradszewczuk.weatherapp.data.remote.weatherModel
 
 import com.google.gson.annotations.SerializedName
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.daily.Daily
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.hourly.Hourly
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.minutely.Minutely
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.daily.Daily
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.hourly.Hourly
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.minutely.Minutely
 
 
 data class WeatherResponse(

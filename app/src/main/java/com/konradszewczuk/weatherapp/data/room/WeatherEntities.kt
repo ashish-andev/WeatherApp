@@ -1,4 +1,4 @@
-package com.konradszewczuk.weatherapp.repository.room
+package com.konradszewczuk.weatherapp.data.room
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

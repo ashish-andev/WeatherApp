@@ -1,9 +1,9 @@
 package com.konradszewczuk.weatherapp.utils
 
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
-import com.konradszewczuk.weatherapp.ui.dto.HourlyWeatherDTO
-import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
-import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
+import com.konradszewczuk.weatherapp.domain.dto.HourlyWeatherDTO
+import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
+import com.konradszewczuk.weatherapp.domain.dto.WeeklyWeatherDTO
 import java.util.*
 
 

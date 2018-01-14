@@ -1,6 +1,6 @@
-package com.konradszewczuk.weatherapp.repository.remote
+package com.konradszewczuk.weatherapp.data.remote
 
-import com.konradszewczuk.weatherapp.repository.remote.weatherModel.WeatherResponse
+import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Path
