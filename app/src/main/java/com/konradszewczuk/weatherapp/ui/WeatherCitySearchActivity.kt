@@ -2,7 +2,6 @@ package com.konradszewczuk.weatherapp.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,11 +22,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.konradszewczuk.weatherapp.di.WeatherApplication
 import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
 import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
 class WeatherCitySearchActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var viewModelFactory: WeatherViewModelFactory
     private lateinit var viewModel: WeatherViewModel
     private var isConnectedToInternet: Boolean = false
     private var searchedCityNames = ArrayList<String>()
@@ -38,7 +41,8 @@ class WeatherCitySearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather_city_search)
 
-        viewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
+        WeatherApplication.appComponent.inject(this)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(WeatherViewModel::class.java)
 
         val itemInputNameObservable = RxTextView.textChanges(autocomplete_textView)
                 .map { inputText: CharSequence -> inputText.isEmpty() || !isValidCityInput(inputText.toString()) }
@@ -57,7 +61,7 @@ class WeatherCitySearchActivity : AppCompatActivity() {
             else{
                 processRequestStartUI()
                 val searchedCityName = autocomplete_textView.text.toString()
-                setupWeatherDetailsObserver(searchedCityName)?.let { it1 -> compositeDisposable.add(it1) }
+                setupWeatherDetailsObserver(searchedCityName)?.let { it -> compositeDisposable.add(it) }
             }
         }
     }

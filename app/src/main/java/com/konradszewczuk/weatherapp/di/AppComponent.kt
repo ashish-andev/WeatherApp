@@ -1,6 +1,6 @@
 package com.konradszewczuk.weatherapp.di
 
-import com.konradszewczuk.weatherapp.ui.WeatherViewModel
+import com.konradszewczuk.weatherapp.ui.WeatherCitySearchActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -9,5 +9,5 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
 
-    fun inject(weatherViewModel: WeatherViewModel)
+    fun inject(weatherCitySearchActivity: WeatherCitySearchActivity)
 }

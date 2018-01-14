@@ -9,7 +9,6 @@ import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.utils.TransformersDTO
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -22,27 +21,21 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     override fun getWeather(cityName: String): Single<WeatherDetailsDTO> {
-//        return remoteWeatherDataSource.requestCityAddressByName(cityName)
-//                .flatMap({ responseFromServiceA: LocationResponse -> remoteWeatherDataSource.requestWeatherForCity(responseFromServiceA.results[0].geometry.location.lat.toString(), responseFromServiceA.results[0].geometry.location.lng.toString()) },
-//                        { responseFromServiceA: LocationResponse, responseFromServiceB: WeatherResponse ->
-//                            TransformersDTO.transformToWeatherDetailsDTO(responseFromServiceA.results[0].formatted_address, responseFromServiceB)
-//                        })
-//                .retry()
 
         return remoteWeatherDataSource.requestCityAddressByName(cityName)
-                .flatMap({ a: LocationResponse ->
+                .flatMap({ locationResponse: LocationResponse ->
                     remoteWeatherDataSource.requestWeatherForCity(
-                            a.results[0].geometry.location.lat.toString(),
-                            a.results[0].geometry.location.lng.toString()
+                            locationResponse.results[0].geometry.location.lat.toString(),
+                            locationResponse.results[0].geometry.location.lng.toString()
                     )
-                            .map { b: WeatherResponse ->
+                            .map { weatherResponse: WeatherResponse ->
                                 TransformersDTO.transformToWeatherDetailsDTO(
-                                        a.results[0].formatted_address,
-                                        b
+                                        locationResponse.results[0].formatted_address,
+                                        weatherResponse
                                 )
                             }
                 })
-                .retry()
+                .retry(1)
 
     }
 
@@ -54,6 +47,5 @@ class WeatherRepositoryImpl @Inject constructor(
     override fun addCity(cityName: String) {
         Completable.fromCallable { roomDataSource.weatherSearchCityDao().insertCity(CityEntity(cityName = cityName)) }.subscribeOn(Schedulers.io()).subscribe()
     }
-
 
 }

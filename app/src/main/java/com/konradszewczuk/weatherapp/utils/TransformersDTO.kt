@@ -7,7 +7,6 @@ import com.konradszewczuk.weatherapp.domain.dto.WeeklyWeatherDTO
 import java.util.*
 
 
-
 object TransformersDTO{
     fun transformToWeatherDetailsDTO(cityName: String, weatherResponse: WeatherResponse?): WeatherDetailsDTO {
         val temperatureFahrenheit: Double? = weatherResponse?.currently?.temperature
@@ -28,8 +27,14 @@ object TransformersDTO{
             hourlyWeatherList.add(HourlyWeatherDTO(it.time.toLong(), it.temperature))
         }
 
+        var hourlyWeatherStringFormatedHoursList = ArrayList<String>()
+
         //temperature for only next 24hours
-        val hourlyWeatherStringFormatedHoursList = (0..24).mapTo(ArrayList<String>()) { StringFormatter.convertTimestampToHourFormat(timestamp = hourlyWeatherList[it].timestamp, timeZone = weatherResponse?.timezone) }
+        if(hourlyWeatherList.size > 24){
+            hourlyWeatherStringFormatedHoursList = (0..24).mapTo(ArrayList<String>()) {
+                StringFormatter.convertTimestampToHourFormat(timestamp = hourlyWeatherList[it].timestamp, timeZone = weatherResponse?.timezone)
+            }
+        }
 
         return WeatherDetailsDTO(
                 cityName = cityName,
