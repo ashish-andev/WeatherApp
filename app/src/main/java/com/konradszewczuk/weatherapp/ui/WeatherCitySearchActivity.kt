@@ -2,7 +2,6 @@ package com.konradszewczuk.weatherapp.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.location.Address
 import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,11 +12,9 @@ import com.konradszewczuk.weatherapp.R
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
-import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
 import com.konradszewczuk.weatherapp.data.room.CityEntity
 
 import com.konradszewczuk.weatherapp.utils.InputValidator.isValidCityInput
-import com.konradszewczuk.weatherapp.utils.TransformersDTO.transformToWeatherDetailsDTO
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_weather_city_search.*
 import org.parceler.Parcels
@@ -26,14 +23,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
 import io.reactivex.disposables.Disposable
-
 
 class WeatherCitySearchActivity : AppCompatActivity() {
 
     private lateinit var viewModel: WeatherViewModel
-    private lateinit var address: Address
-    private var isConnectedToInternet: Boolean = true
+    private var isConnectedToInternet: Boolean = false
     private var searchedCityNames = ArrayList<String>()
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -58,30 +54,23 @@ class WeatherCitySearchActivity : AppCompatActivity() {
             processRequestStartUI()
 
             val searchedCityName = autocomplete_textView.text.toString()
-            val geocoder = Geocoder(this, Locale.ENGLISH)
 
-            compositeDisposable.add(setupWeatherDetailsObserver(geocoder, searchedCityName))
+            setupWeatherDetailsObserver(searchedCityName)?.let { it1 -> compositeDisposable.add(it1) }
         }
     }
 
     private fun setupTextInputObserver(itemInputNameObservable: Observable<Boolean>): Disposable {
         return itemInputNameObservable.subscribe { inputIsEmpty: Boolean ->
-            cityTextInputLayout.setError("Invalid input")
+            cityTextInputLayout.setError(getString(R.string.invalid_input_message))
             cityTextInputLayout.setErrorEnabled(inputIsEmpty)
             cityButton?.isEnabled = !inputIsEmpty
         }
     }
 
-    private fun setupWeatherDetailsObserver(geocoder: Geocoder, searchedCityName: String): Disposable {
-        return Observable.fromCallable { geocoder.getFromLocationName(searchedCityName, 1) }
-                .subscribeOn(Schedulers.io())
-                .flatMap { responseAddress: MutableList<Address> ->
-                    address = responseAddress[0]
-                    viewModel.getWeather(responseAddress[0].latitude, responseAddress[0].longitude)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { weatherResponse: WeatherResponse? ->
+    private fun setupWeatherDetailsObserver(searchedCityName: String): Disposable? {
+        return viewModel.getWeather(searchedCityName)?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe(
+                        { weatherResponse: WeatherDetailsDTO? ->
                             resolveRequestEndUI()
                             navigateToDetailsActivity(weatherResponse)
 
@@ -91,9 +80,10 @@ class WeatherCitySearchActivity : AppCompatActivity() {
                         { throwable: Throwable? ->
                             resolveRequestEndUI()
                             if (!isConnectedToInternet) {
-                                Toast.makeText(this, "You don't have internet coonection, cannot get data offline", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.user_has_not_internet_connection_message), Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(this, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show()
+                                throwable?.printStackTrace()
+                                Toast.makeText(this, getString(R.string.error_with_fetching_weather_details_message), Toast.LENGTH_SHORT).show()
                             }
                         }
                 )
@@ -111,10 +101,9 @@ class WeatherCitySearchActivity : AppCompatActivity() {
         progressBar.visibility = View.INVISIBLE
     }
 
-    private fun navigateToDetailsActivity(weatherResponse: WeatherResponse?) {
+    private fun navigateToDetailsActivity(weatherResponse: WeatherDetailsDTO?) {
         val intent = Intent(this, WeatherDetailsActivity::class.java)
-        val locationName = address.featureName + ", " + address.countryName
-        intent.putExtra("tempBundle", Parcels.wrap(transformToWeatherDetailsDTO(locationName, weatherResponse)))
+        intent.putExtra(getString(R.string.intentWeatherDetailsParcelerBundleName), Parcels.wrap(weatherResponse))
         startActivity(intent)
     }
 
@@ -148,13 +137,8 @@ class WeatherCitySearchActivity : AppCompatActivity() {
                 .subscribe(
                         { isConnected: Boolean? ->
                             isConnected?.let {
-                                when {
-                                    !it -> if (isConnectedToInternet)
-                                        Toast.makeText(this, "You lost internet connection, for now you can't get data offline.", Toast.LENGTH_SHORT).show()
-                                    else -> if (it && !isConnectedToInternet) {
-                                        Toast.makeText(this, "Reconnected, now you can get data from internet.", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
+                                    if (!isConnected)
+                                        Toast.makeText(this, getString(R.string.user_has_lost_internet_connection_message), Toast.LENGTH_SHORT).show()
                                 isConnectedToInternet = isConnected
                             }
                         },

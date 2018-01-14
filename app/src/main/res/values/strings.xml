@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="user_has_not_internet_connection_message">You don\'t have internet connection, cannot get data offline.</string>
+    <string name="error_with_fetching_weather_details_message">Something went wrong, please try again later.</string>
+    <string name="user_has_lost_internet_connection_message">You lost internet connection, for now you can\'t get data offline.</string>
+    <string name="invalid_input_message">Invalid input</string>
+    <string name="intentWeatherDetailsParcelerBundleName">weatherDetailsResponse</string>
 </resources>

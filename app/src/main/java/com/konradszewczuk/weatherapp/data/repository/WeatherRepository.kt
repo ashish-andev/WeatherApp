@@ -1,16 +1,16 @@
 package com.konradszewczuk.weatherapp.data.repository
 
-import com.konradszewczuk.weatherapp.data.remote.weatherModel.WeatherResponse
 import com.konradszewczuk.weatherapp.data.room.CityEntity
+import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
 import io.reactivex.Flowable
 import io.reactivex.Observable
 
 
 interface WeatherRepository {
 
-    fun getWeather(latitude: Double, longitude: Double): Observable<WeatherResponse>
-
     fun getCities(): Flowable<List<CityEntity>>
+
+    fun getWeather(cityName: String): Observable<WeatherDetailsDTO>?
 
     fun addCity(cityName: String)
 }

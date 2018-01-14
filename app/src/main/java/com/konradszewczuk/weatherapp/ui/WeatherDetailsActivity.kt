@@ -27,13 +27,12 @@ import kotlinx.android.synthetic.main.activity_weather_details.*
 import org.parceler.Parcels
 import java.util.*
 
-
 class WeatherDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather_details)
-        val weatherDetails = Parcels.unwrap<WeatherDetailsDTO>(intent.getParcelableExtra("tempBundle"))
+        val weatherDetails = Parcels.unwrap<WeatherDetailsDTO>(intent.getParcelableExtra(getString(R.string.intentWeatherDetailsParcelerBundleName)))
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = weatherDetails.cityName
