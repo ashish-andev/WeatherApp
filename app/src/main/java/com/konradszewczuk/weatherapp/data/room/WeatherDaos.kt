@@ -6,9 +6,6 @@ import io.reactivex.Flowable
 @Dao
 interface WeatherCitiesDao {
 
-    @Query(RoomConfig.SELECT_CITIES_COUNT)
-    fun getCitiesTotal(): Flowable<Int>
-
     @Insert
     fun insertAll(cities: List<CityEntity>)
 
