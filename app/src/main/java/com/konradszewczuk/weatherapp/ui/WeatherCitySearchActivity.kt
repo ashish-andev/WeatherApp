@@ -51,11 +51,14 @@ class WeatherCitySearchActivity : AppCompatActivity() {
 
     private fun setupSearchedCityClickedListener() {
         cityButton.setOnClickListener {
-            processRequestStartUI()
-
-            val searchedCityName = autocomplete_textView.text.toString()
-
-            setupWeatherDetailsObserver(searchedCityName)?.let { it1 -> compositeDisposable.add(it1) }
+            if (!isConnectedToInternet) {
+                Toast.makeText(this, getString(R.string.user_has_not_internet_connection_message), Toast.LENGTH_SHORT).show()
+            }
+            else{
+                processRequestStartUI()
+                val searchedCityName = autocomplete_textView.text.toString()
+                setupWeatherDetailsObserver(searchedCityName)?.let { it1 -> compositeDisposable.add(it1) }
+            }
         }
     }
 
