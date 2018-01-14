@@ -8,7 +8,8 @@ App for showing basic weather forecast for chosen city using MVVM pattern.
 
 ###### Demo
 
-![](https://i.imgur.com/jFzj3Ru.png)
+![](https://i.imgur.com/Kyq5EQN.png)
+![](https://i.imgur.com/m261gQl.png)
 
 ## Used tools
 
@@ -20,6 +21,7 @@ App for showing basic weather forecast for chosen city using MVVM pattern.
 * [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
 * [Retrofit](http://square.github.io/retrofit/)
 * [Parceler](https://github.com/johncarl81/parceler)
+* [Mockito](https://github.com/mockito/mockito)
 
 ## API
 
