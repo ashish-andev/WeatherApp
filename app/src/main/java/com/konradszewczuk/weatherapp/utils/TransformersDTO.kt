@@ -20,7 +20,7 @@ object TransformersDTO{
         val weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
         weatherResponse?.daily?.data?.forEach {
             if (it.time.toLong() * 1000 > Date().time)
-                weeklyWeatherList.add(WeeklyWeatherDTO(it.temperatureMax.toString(), it.temperatureMin.toString(), StringDateFormatter.convertTimestampToDayOfTheWeek(it.time), it.icon))
+                weeklyWeatherList.add(WeeklyWeatherDTO(it.temperatureMax.toString(), it.temperatureMin.toString(), StringFormatter.convertTimestampToDayOfTheWeek(it.time), it.icon))
         }
 
         val hourlyWeatherList = ArrayList<HourlyWeatherDTO>()
@@ -29,7 +29,7 @@ object TransformersDTO{
         }
 
         //temperature for only next 24hours
-        val hourlyWeatherStringFormatedHoursList = (0..24).mapTo(ArrayList<String>()) { StringDateFormatter.convertTimestampToHourFormat(timestamp = hourlyWeatherList[it].timestamp, timeZone = weatherResponse?.timezone) }
+        val hourlyWeatherStringFormatedHoursList = (0..24).mapTo(ArrayList<String>()) { StringFormatter.convertTimestampToHourFormat(timestamp = hourlyWeatherList[it].timestamp, timeZone = weatherResponse?.timezone) }
 
         return WeatherDetailsDTO(
                 cityName = cityName,

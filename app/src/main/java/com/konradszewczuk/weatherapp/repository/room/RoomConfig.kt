@@ -5,7 +5,6 @@ class RoomConfig {
     companion object {
 
         const val DATABASE_WEATHER = "weather.db"
-
         const val TABLE_CITIES= "cities"
 
         private const val SELECT_COUNT = "SELECT COUNT(*) FROM "

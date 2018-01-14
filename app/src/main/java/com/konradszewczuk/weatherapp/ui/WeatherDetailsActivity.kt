@@ -18,6 +18,10 @@ import com.konradszewczuk.weatherapp.ui.adapters.WeeklyWeatherAdapter
 import com.konradszewczuk.weatherapp.ui.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.ChartFormatter
+import com.konradszewczuk.weatherapp.utils.StringFormatter.convertToValueWithUnit
+import com.konradszewczuk.weatherapp.utils.StringFormatter.unitDegreesCelsius
+import com.konradszewczuk.weatherapp.utils.StringFormatter.unitPercentage
+import com.konradszewczuk.weatherapp.utils.StringFormatter.unitsMetresPerSecond
 import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertFahrenheitToCelsius
 import kotlinx.android.synthetic.main.activity_weather_details.*
 import org.parceler.Parcels
@@ -25,9 +29,6 @@ import java.util.*
 
 
 class WeatherDetailsActivity : AppCompatActivity() {
-
-    private var weeklyWeatherList = ArrayList<WeeklyWeatherDTO>()
-    private var adapter: WeeklyWeatherAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,27 +38,32 @@ class WeatherDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = weatherDetails.cityName
 
-        textViewCurrentTemperature.text = "%.2f".format(weatherDetails.temperature) + " \u2103" //TODO
+        setupMainWeatherDetailsInfo(weatherDetails)
+        setupRecyclerView(weatherDetails)
+        setupHourlyChart(chartHourlyWeather, weatherDetails)
+
+        weatherDetails.temperature?.let { setupTemperatureTextColor(it) }
+    }
+
+    private fun setupMainWeatherDetailsInfo(weatherDetails: WeatherDetailsDTO) {
+        textViewCurrentTemperature.text = convertToValueWithUnit(2, unitDegreesCelsius, weatherDetails.temperature)
         textViewWeatherSummary.text = weatherDetails.weatherSummary
-        textViewHumidityValue.text = weatherDetails.humidity.toString() + "%"
-        textViewWindSpeedValue.text = weatherDetails.windSpeed.toString() + "m/s"
-        textViewCloudCoverageValue.text = "%.2f".format(weatherDetails.cloudsPercentage) + "%"
+        textViewHumidityValue.text = convertToValueWithUnit(2, unitPercentage, weatherDetails.humidity)
+        textViewWindSpeedValue.text = convertToValueWithUnit(2, unitsMetresPerSecond, weatherDetails.windSpeed)
+        textViewCloudCoverageValue.text = convertToValueWithUnit(2, unitPercentage, weatherDetails.cloudsPercentage)
+    }
 
-        weatherDetails.temperature?.let { processTemperatureText(it) }
-
-        weeklyWeatherList = weatherDetails.weeklyDayWeahterList as ArrayList<WeeklyWeatherDTO>
-        adapter = WeeklyWeatherAdapter(weeklyWeatherList)
-
+    private fun setupRecyclerView(weatherDetails: WeatherDetailsDTO) {
+        val weeklyWeatherList = weatherDetails.weeklyDayWeahterList as ArrayList<WeeklyWeatherDTO>
+        val adapter: WeeklyWeatherAdapter? = WeeklyWeatherAdapter(weeklyWeatherList)
         val mLayoutManager = LinearLayoutManager(applicationContext)
         recyclerViewWeeklyWeather.setLayoutManager(mLayoutManager)
         recyclerViewWeeklyWeather.setItemAnimator(DefaultItemAnimator())
         recyclerViewWeeklyWeather.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         recyclerViewWeeklyWeather.setAdapter(adapter)
-
-        setHourlyChart(chartHourlyWeather, weatherDetails)
     }
 
-    private fun processTemperatureText(temperature: Double) {
+    private fun setupTemperatureTextColor(temperature: Double) {
         when {
             temperature < 10 -> textViewCurrentTemperature.setTextColor(Color.BLUE)
             temperature in 10..20 -> textViewCurrentTemperature.setTextColor(Color.BLACK)
@@ -70,7 +76,7 @@ class WeatherDetailsActivity : AppCompatActivity() {
         return true
     }
 
-    private fun setHourlyChart(lineChart: LineChart, weatherDetailsDTO: WeatherDetailsDTO) {
+    private fun setupHourlyChart(lineChart: LineChart, weatherDetailsDTO: WeatherDetailsDTO) {
 
         val entries = ArrayList<Entry>()
         val temperatureList = ArrayList<Int>()
@@ -135,5 +141,4 @@ class WeatherDetailsActivity : AppCompatActivity() {
         axis.axisMinimum = (Collections.min(temp) - 2).toFloat()
         axis.axisMaximum = (Collections.max(temp) + 2).toFloat()
     }
-
 }

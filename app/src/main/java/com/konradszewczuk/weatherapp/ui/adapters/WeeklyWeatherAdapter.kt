@@ -7,13 +7,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.konradszewczuk.weatherapp.R
 import com.konradszewczuk.weatherapp.ui.dto.WeeklyWeatherDTO
+import com.konradszewczuk.weatherapp.utils.StringFormatter.convertToValueWithUnit
+import com.konradszewczuk.weatherapp.utils.StringFormatter.unitDegreesCelsius
 import com.konradszewczuk.weatherapp.utils.WeatherMathUtils.convertFahrenheitToCelsius
 import java.util.ArrayList
 
 
 class WeeklyWeatherAdapter(val list: ArrayList<WeeklyWeatherDTO>) : RecyclerView.Adapter<WeeklyWeatherAdapter.ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent?.getContext())
+        val itemView = LayoutInflater.from(parent?.context)
                 .inflate(R.layout.item_weather_day, parent, false)
         return ViewHolder(itemView)
     }
@@ -24,10 +26,10 @@ class WeeklyWeatherAdapter(val list: ArrayList<WeeklyWeatherDTO>) : RecyclerView
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val item = list.get(position)
-        holder?.textViewDayMaxTemp?.setText("%.2f".format(convertFahrenheitToCelsius(item.maxTemp.toDouble())))
-        holder?.textViewDayMinTemp?.setText("%.2f".format(convertFahrenheitToCelsius(item.minTemp.toDouble())))
-        holder?.textViewDayWeatherWeekDay?.setText(item.dayOfWeek)
-        holder?.textViewDayWeatherType?.setText(item.weatherType)
+        holder?.textViewDayMaxTemp?.text = convertToValueWithUnit(2, unitDegreesCelsius, convertFahrenheitToCelsius(item.maxTemp.toDouble()))
+        holder?.textViewDayMinTemp?.text = convertToValueWithUnit(2, unitDegreesCelsius, convertFahrenheitToCelsius(item.minTemp.toDouble()))
+        holder?.textViewDayWeatherWeekDay?.text = item.dayOfWeek
+        holder?.textViewDayWeatherType?.text = item.weatherType
     }
 
     class ViewHolder(view: View)  : RecyclerView.ViewHolder(view) {

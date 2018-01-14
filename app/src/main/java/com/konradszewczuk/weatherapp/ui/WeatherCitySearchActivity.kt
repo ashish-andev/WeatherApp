@@ -54,7 +54,7 @@ class WeatherCitySearchActivity : AppCompatActivity() {
             processRequestStartUI()
 
             val searchedCityName = autocomplete_textView.text.toString()
-            val geocoder = Geocoder(this)
+            val geocoder = Geocoder(this, Locale.ENGLISH)
 
             compositeDisposable.add(Observable.fromCallable { geocoder.getFromLocationName(searchedCityName, 1) }
                     .subscribeOn(Schedulers.io())
@@ -73,7 +73,7 @@ class WeatherCitySearchActivity : AppCompatActivity() {
                             },
                             { throwable: Throwable? ->
                                 resolveRequestEndUI()
-                                Toast.makeText(this, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show()
                             }
                     ))
         }

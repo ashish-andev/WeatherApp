@@ -10,5 +10,4 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(weatherViewModel: WeatherViewModel)
-
 }
