@@ -6,6 +6,9 @@ App for showing basic weather forecast for chosen city using MVVM pattern.
 * You can get current weather forecast for searched city and also weather forecast for next hours and week
 * You must have working internet connection to be able to fetch weather forecast
 
+###### Blog Post
+https://medium.com/@konradszewczuk/simple-weather-forecast-app-using-kotlin-retrofit-and-rxjava2-c4b1f4d9344e
+
 ###### Demo
 
 ![](https://i.imgur.com/Kyq5EQN.png)
