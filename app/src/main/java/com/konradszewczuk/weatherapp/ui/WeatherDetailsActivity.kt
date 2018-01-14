@@ -18,6 +18,7 @@ import com.konradszewczuk.weatherapp.ui.adapters.WeeklyWeatherAdapter
 import com.konradszewczuk.weatherapp.domain.dto.WeatherDetailsDTO
 import com.konradszewczuk.weatherapp.domain.dto.WeeklyWeatherDTO
 import com.konradszewczuk.weatherapp.utils.ChartFormatter
+import com.konradszewczuk.weatherapp.utils.StringFormatter.convertTimestampToDayAndHourFormat
 import com.konradszewczuk.weatherapp.utils.StringFormatter.convertToValueWithUnit
 import com.konradszewczuk.weatherapp.utils.StringFormatter.unitDegreesCelsius
 import com.konradszewczuk.weatherapp.utils.StringFormatter.unitPercentage
@@ -45,6 +46,7 @@ class WeatherDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupMainWeatherDetailsInfo(weatherDetails: WeatherDetailsDTO) {
+        textViewCurrentTime.text = convertTimestampToDayAndHourFormat(Date().time)
         textViewCurrentTemperature.text = convertToValueWithUnit(2, unitDegreesCelsius, weatherDetails.temperature)
         textViewWeatherSummary.text = weatherDetails.weatherSummary
         textViewHumidityValue.text = convertToValueWithUnit(2, unitPercentage, weatherDetails.humidity)

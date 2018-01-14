@@ -24,6 +24,7 @@ class WeatherRepositoryImpl @Inject constructor(
                         { responseFromServiceA, responseFromServiceB ->
                             TransformersDTO.transformToWeatherDetailsDTO(responseFromServiceA.results[0].formatted_address, responseFromServiceB)
                         })
+                .retry()
     }
 
 

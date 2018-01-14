@@ -5,4 +5,10 @@
     <string name="user_has_lost_internet_connection_message">You lost internet connection, for now you can\'t get data offline.</string>
     <string name="invalid_input_message">Invalid input</string>
     <string name="intentWeatherDetailsParcelerBundleName">weatherDetailsResponse</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="backgroundscreenimage">backgroundScreenImage</string>
+    <string name="wind_speed">Wind speed:\u0020</string>
+    <string name="humidity">Humidity:\u0020</string>
+    <string name="cloud_coverage">Cloud coverage:\u0020</string>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +10,8 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/app_background" />
+        android:src="@drawable/app_background"
+        android:contentDescription="@string/backgroundscreenimage" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -66,7 +66,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Cloud coverage: " />
+                                android:text="@string/cloud_coverage" />
 
                             <TextView
                                 android:id="@+id/textViewCloudCoverageValue"
@@ -86,7 +86,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Wind speed: " />
+                                android:text="@string/wind_speed" />
 
                             <TextView
                                 android:id="@+id/textViewWindSpeedValue"
@@ -105,7 +105,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Humidity: " />
+                                android:text="@string/humidity" />
 
                             <TextView
                                 android:id="@+id/textViewHumidityValue"
@@ -115,15 +115,61 @@
                         </LinearLayout>
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textViewCurrentTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|top"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            android:textStyle="bold"
+                            tools:text="Monday, 16:40" />
+
+                        <View
+                            android:id="@+id/separatorCurrentTime"
+                            style="@style/HorizontalDivider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="0dp" />
+                    </LinearLayout>
                 </FrameLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:layout_margin="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/daily"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/daily"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:id="@+id/separator_day_list"
+                        style="@style/HorizontalDivider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="0dp" />
+
+                </LinearLayout>
 
                 <HorizontalScrollView
                     android:id="@+id/line_chart_horizontal_scroll"
@@ -153,11 +199,34 @@
                 android:layout_margin="4dp"
                 android:layout_weight="2">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerViewWeeklyWeather"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:focusable="false" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/weekly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/weekly"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:id="@+id/separator_week_list"
+                        style="@style/HorizontalDivider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="0dp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerViewWeeklyWeather"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:focusable="false" />
+                </LinearLayout>
+
 
             </android.support.v7.widget.CardView>
 

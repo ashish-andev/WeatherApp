@@ -16,6 +16,14 @@ object StringFormatter {
         return dayName
     }
 
+    fun convertTimestampToDayAndHourFormat(timestamp: Long): String{
+        val DAY_HOUR_MINUTE = "EEEE, HH:mm"
+        val formatter = SimpleDateFormat (DAY_HOUR_MINUTE, Locale.ENGLISH)
+
+        val dateFormat = formatter.format(Date(timestamp))
+        return dateFormat
+    }
+
     fun convertTimestampToHourFormat(timestamp: Long, timeZone: String?) : String{
         val HOUR_MINUTE = "HH:mm"
         val formatter = SimpleDateFormat (HOUR_MINUTE)
